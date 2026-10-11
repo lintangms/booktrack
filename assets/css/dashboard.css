@@ -11,7 +11,7 @@
   border: 1px solid var(--border-light);
   padding: 22px 20px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
   box-shadow: var(--shadow-sm);
 }
@@ -68,7 +68,7 @@
   font-weight: 700;
   color: var(--text-main);
   line-height: 1.1;
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 
 .stat-desc {

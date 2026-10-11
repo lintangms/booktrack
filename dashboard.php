@@ -3,8 +3,6 @@ require_once __DIR__ . '/includes/auth.php';
 $currentPage = 'dashboard';
 $pageTitle = 'Dashboard';
 $currentUser = getCurrentUser();
-$flashMessage = $_SESSION['flash_message'] ?? null;
-unset($_SESSION['flash_message']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -28,19 +26,6 @@ unset($_SESSION['flash_message']);
       <?php include 'includes/header.php'; ?>
 
       <main class="app-page-body">
-        <?php if ($flashMessage): ?>
-          <div class="welcome-flash-alert">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-            <div>
-              <strong><?= htmlspecialchars($flashMessage) ?></strong>
-              <span>Profil Anda telah aktif di BookTrack.</span>
-            </div>
-          </div>
-        <?php endif; ?>
-
         <div class="page-header-row">
           <div>
             <h1 class="page-title">Dashboard</h1>
@@ -60,7 +45,6 @@ unset($_SESSION['flash_message']);
             <div class="stat-info">
               <span class="stat-label">Total Buku</span>
               <span class="stat-value">52</span>
-              <span class="stat-desc">6 judul koleksi</span>
             </div>
           </div>
 
@@ -76,7 +60,6 @@ unset($_SESSION['flash_message']);
             <div class="stat-info">
               <span class="stat-label">Total Anggota</span>
               <span class="stat-value">5</span>
-              <span class="stat-desc">4 anggota aktif</span>
             </div>
           </div>
 
@@ -90,7 +73,6 @@ unset($_SESSION['flash_message']);
             <div class="stat-info">
               <span class="stat-label">Sedang Dipinjam</span>
               <span class="stat-value">4</span>
-              <span class="stat-desc">Transaksi berjalan</span>
             </div>
           </div>
 
@@ -104,26 +86,8 @@ unset($_SESSION['flash_message']);
             <div class="stat-info">
               <span class="stat-label">Buku Terlambat</span>
               <span class="stat-value">1</span>
-              <span class="stat-desc">Perlu tindak lanjut</span>
             </div>
           </div>
-        </section>
-
-        <section class="dashboard-alert-banner">
-          <div class="alert-banner-left">
-            <div class="alert-banner-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-            </div>
-            <div>
-              <div class="alert-banner-title">1 peminjaman melewati tenggat</div>
-              <div class="alert-banner-desc">Hubungi anggota dan proses pengembalian untuk memperbarui ketersediaan buku.</div>
-            </div>
-          </div>
-          <a href="#" class="btn-banner-action">Tinjau sekarang</a>
         </section>
 
         <section class="dashboard-chart-card">
