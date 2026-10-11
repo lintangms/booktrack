@@ -1,6 +1,10 @@
 <?php
+require_once __DIR__ . '/includes/auth.php';
 $currentPage = 'dashboard';
 $pageTitle = 'Dashboard';
+$currentUser = getCurrentUser();
+$flashMessage = $_SESSION['flash_message'] ?? null;
+unset($_SESSION['flash_message']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -24,10 +28,23 @@ $pageTitle = 'Dashboard';
       <?php include 'includes/header.php'; ?>
 
       <main class="app-page-body">
+        <?php if ($flashMessage): ?>
+          <div class="welcome-flash-alert">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <div>
+              <strong><?= htmlspecialchars($flashMessage) ?></strong>
+              <span>Profil Anda telah aktif di BookTrack.</span>
+            </div>
+          </div>
+        <?php endif; ?>
+
         <div class="page-header-row">
           <div>
             <h1 class="page-title">Dashboard</h1>
-            <p class="page-subtitle">Ringkasan aktivitas dan koleksi perpustakaan.</p>
+            <p class="page-subtitle">Selamat datang kembali, <strong><?= htmlspecialchars($currentUser['fullname']) ?></strong>. Ringkasan aktivitas dan koleksi perpustakaan.</p>
           </div>
         </div>
 

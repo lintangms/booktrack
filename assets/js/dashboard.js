@@ -19,6 +19,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // User Profile Dropdown Toggle
+  const userProfileToggle = document.getElementById('userProfileToggle');
+  const userDropdownMenu = document.getElementById('userDropdownMenu');
+
+  if (userProfileToggle && userDropdownMenu) {
+    userProfileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isExpanded = userDropdownMenu.classList.toggle('show');
+      userProfileToggle.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!userDropdownMenu.contains(e.target) && !userProfileToggle.contains(e.target)) {
+        userDropdownMenu.classList.remove('show');
+        userProfileToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && userDropdownMenu.classList.contains('show')) {
+        userDropdownMenu.classList.remove('show');
+        userProfileToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
   const searchInput = document.getElementById('searchBookInput');
   const categoryFilter = document.getElementById('categoryFilter');
   const btnResetFilter = document.getElementById('btnResetFilter');

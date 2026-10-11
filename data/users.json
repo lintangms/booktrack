@@ -1,0 +1,34 @@
+[
+    {
+        "fullname": "Alya Prameswari",
+        "member_id": "ADM-001",
+        "email": "alya@booktrack.id",
+        "password": "$2y$10$HDHMxFDkYAKLJYURryL9Z.Zo3.83tMb79XqzeoMSUvkPePrxlPk2.",
+        "role": "Administrator",
+        "created_at": "2026-01-01 08:00:00"
+    },
+    {
+        "fullname": "Lintang Maulana",
+        "member_id": "231104028",
+        "email": "lintang@kampus.ac.id",
+        "password": "$2y$10$mXcPK5xz6Aa0hxMi9scV2uqSUOfMaCr5ENWE6gauHa6D8IjWWSxnK",
+        "role": "Anggota",
+        "created_at": "2026-10-11 16:55:16"
+    },
+    {
+        "fullname": "Rizky Ramadhan",
+        "member_id": "231109999",
+        "email": "rizky@kampus.ac.id",
+        "password": "$2y$10$h.QBkabtFyonGrSe734Tge6nPN4J\/po6qS5Dm0wqmDvMAibvGFXJa",
+        "role": "Anggota",
+        "created_at": "2026-10-11 16:56:34"
+    },
+    {
+        "fullname": "elang",
+        "member_id": "113333555555",
+        "email": "elang@gmail.com",
+        "password": "$2y$10$zgnJkX73MsWlX7Q9h7TtS.NcrYXQWr10.ZKGJcXqkEliO0W7LXogy",
+        "role": "Anggota",
+        "created_at": "2026-10-11 16:59:39"
+    }
+]

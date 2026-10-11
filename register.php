@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/auth.php';
 
 $message = '';
 $message_type = '';
@@ -21,8 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'Kata sandi minimal harus 8 karakter.';
         $message_type = 'error';
     } else {
-        $message = 'Akun berhasil dibuat! Silakan masuk dengan akun baru Anda.';
-        $message_type = 'success';
+        $result = registerUser($fullname, $member_id, $email, $password);
+        if ($result['success']) {
+            $_SESSION['flash_message'] = 'Pendaftaran berhasil! Selamat datang, ' . $fullname . '.';
+            header('Location: dashboard.php');
+            exit;
+        } else {
+            $message = $result['message'];
+            $message_type = 'error';
+        }
     }
 }
 ?>
