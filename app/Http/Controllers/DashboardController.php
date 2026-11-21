@@ -17,8 +17,8 @@ class DashboardController extends Controller
         // Statistik
         $totalBooks = Book::sum('stock');
         $totalMembers = User::count();
-        $borrowedBooks = Loan::where('status', 'borrowed')->count();
-        $overdueBooks = Loan::where('status', 'overdue')->count();
+        $borrowedBooks = Loan::whereIn('status', ['borrowed', 'Dipinjam'])->count();
+        $overdueBooks = Loan::whereIn('status', ['overdue', 'Terlambat'])->count();
 
         // Aktivitas Peminjaman per bulan (data 6 bulan)
         $chartData = [
