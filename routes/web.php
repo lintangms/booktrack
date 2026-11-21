@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/data-buku', [BookController::class, 'store'])->name('books.store');
     Route::put('/data-buku/{book}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/data-buku/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+
+    // Transaksi Peminjaman
+    Route::prefix('peminjaman')->name('loans.')->group(function () {
+        Route::get('/', [LoanController::class, 'index'])->name('index');
+        Route::post('/', [LoanController::class, 'store'])->name('store');
+        Route::put('/{loan}', [LoanController::class, 'update'])->name('update');
+        Route::delete('/{loan}', [LoanController::class, 'destroy'])->name('destroy');
+    });
 
     // Profil Pengguna
     Route::get('/profil', [ProfileController::class, 'index'])->name('profile');

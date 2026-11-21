@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('loan_date');
             $table->date('due_date');
             $table->date('return_date')->nullable();
-            $table->string('status')->default('borrowed'); // borrowed, returned, overdue
+            $table->string('status')->default('Dipinjam'); // Dipinjam, Terlambat, Dikembalikan
             $table->text('notes')->nullable();
             $table->timestamps();
         });

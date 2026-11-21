@@ -30,7 +30,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a href="{{ route('books.index') }}" class="nav-link">
+        <a href="{{ route('loans.index') }}" class="nav-link {{ request()->routeIs('loans.*') ? 'active' : '' }}">
           <span class="nav-indicator"></span>
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M7 10h14l-4-4"></path>
