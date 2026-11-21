@@ -1,59 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📚 BookTrack - Sistem Informasi Manajemen Perpustakaan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi manajemen perpustakaan modern berbasis **Laravel** dan **MySQL**, dirancang untuk mempermudah pengelolaan katalog buku, anggota perpustakaan, transaksi peminjaman, serta pengembalian buku dan denda keterlambatan secara otomatis.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 👥 Tim Pengembang & Pembagian Modul CRUD
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| No | Peran / Anggota | Tanggung Jawab Modul | Branch Fitur |
+|:---|:---|:---|:---|
+| 1 | **Ketua Tim** | **CRUD 1: Data Buku & Katalog** (`/data-buku`) | `feat/data-buku` |
+| 2 | **Anggota 1** | **CRUD 2: Data Anggota / Mahasiswa** (`/data-anggota`) | `feature/crud-anggota` |
+| 3 | **Anggota 2** | **CRUD 3: Transaksi Peminjaman** (`/peminjaman`) | `feature/crud-peminjaman` |
+| 4 | **Anggota 3** | **CRUD 4: Transaksi Pengembalian & Denda** (`/pengembalian`) | `feature/crud-pengembalian` |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🚀 Fitur Unggulan
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Autentikasi & Otorisasi:** Sistem login, registrasi akun anggota baru, proteksi session, dan manajemen peran (Administrator & Anggota).
+- **Dashboard Ringkasan:** Statistik realtime total koleksi, jumlah anggota, buku dipinjam, buku terlambat, serta grafik tren peminjaman.
+- **CRUD 1 (Katalog Buku):**
+  - **Create:** Tambah judul buku baru dengan ISBN, kategori, stok, dan tema sampul.
+  - **Read:** Daftar buku dengan pencarian cepat (judul/penulis/ISBN) dan filter kategori.
+  - **Update:** Edit informasi buku serta pembaruan kuota stok buku.
+  - **Delete:** Penghapusan data buku dengan konfirmasi.
+- **CRUD 2 (Manajemen Anggota):** Kelola data mahasiswa, kontak, program studi, dan status keaktifan.
+- **CRUD 3 (Peminjaman Buku):** Pencatatan transaksi peminjaman, otomatisasi pengurangan stok buku, dan deteksi jatuh tempo.
+- **CRUD 4 (Pengembalian & Denda):** Kalkulasi denda keterlambatan otomatis (Rp 1.000/hari), inspeksi kondisi fisik buku (Baik/Rusak/Hilang), dan pemulihan stok buku.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## ⚙️ Persyaratan Sistem
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **PHP:** >= 8.2 (dengan ekstensi `pdo_mysql`, `mbstring`, `openssl`)
+- **Web Server:** Apache (XAMPP) atau PHP CLI Server
+- **Database:** MySQL / MariaDB (XAMPP port 3306)
+- **Dependency Manager:** Composer
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🛠️ Panduan Instalasi Lokal
 
-## Contributing
+1. **Clone Repositori:**
+   ```bash
+   git clone https://github.com/lintangms/booktrack.git
+   cd booktrack
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **Instal Dependensi:**
+   ```bash
+   composer install
+   ```
 
-## Code of Conduct
+3. **Konfigurasi Environment:**
+   Duplikat file `.env.example` menjadi `.env`:
+   ```bash
+   copy .env.example .env
+   ```
+   Pastikan konfigurasi database di `.env` sesuai dengan MySQL XAMPP Anda:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=book_track
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. **Generate Application Key:**
+   ```bash
+   php artisan key:generate
+   ```
 
-## Security Vulnerabilities
+5. **Migrasi Database & Seeder Awal:**
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+6. **Jalankan Aplikasi:**
+   ```bash
+   php artisan serve
+   ```
+   Akses aplikasi di browser melalui: **[http://localhost:8000](http://localhost:8000)**
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🔑 Akun Default untuk Pengujian
+
+| Peran | Email | Kata Sandi |
+|:---|:---|:---|
+| **Administrator** | `alya@booktrack.id` | `password123` |
+| **Anggota (Mahasiswa)** | `lintang@kampus.ac.id` | `password123` |
+| **Anggota (Mahasiswa)** | `lintangmuhammadshiddiq@gmail.com` | `password` |
+
+---
+
+## 🧪 Pengujian Otomatis (Unit & Feature Test)
+
+Aplikasi telah dilengkapi unit test dan feature test otomatis menggunakan PHPUnit:
+```bash
+php artisan test
+```
