@@ -19,7 +19,7 @@
         "fullname": "Rizky Ramadhan",
         "member_id": "231109999",
         "email": "rizky@kampus.ac.id",
-        "password": "$2y$10$h.QBkabtFyonGrSe734Tge6nPN4J\/po6qS5Dm0wqmDvMAibvGFXJa",
+        "password": "$2y$10$h.QBkabtFyonGrSe734Tge6nPN4J/po6qS5Dm0wqmDvMAibvGFXJa",
         "role": "Anggota",
         "created_at": "2026-10-11 16:56:34"
     },
@@ -30,5 +30,13 @@
         "password": "$2y$10$zgnJkX73MsWlX7Q9h7TtS.NcrYXQWr10.ZKGJcXqkEliO0W7LXogy",
         "role": "Anggota",
         "created_at": "2026-10-11 16:59:39"
+    },
+    {
+        "fullname": "Lintang Muhammad Shiddiq",
+        "member_id": "12354",
+        "email": "lintangmuhammadshiddiq@gmail.com",
+        "password": "$2y$10$vRnm1PDkwX0ctL2Kk94n6e0AUbeRQlj6akUc/qdqOsFItT8cKhyWC",
+        "role": "Anggota",
+        "created_at": "2026-10-11 20:07:37"
     }
 ]
