@@ -55,6 +55,14 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{loan}', [LoanController::class, 'destroy'])->name('destroy');
     });
 
+    // Transaksi Pengembalian & Denda
+    Route::prefix('pengembalian')->name('returns.')->group(function () {
+        Route::get('/', [BookReturnController::class, 'index'])->name('index');
+        Route::post('/', [BookReturnController::class, 'store'])->name('store');
+        Route::put('/{return}', [BookReturnController::class, 'update'])->name('update');
+        Route::delete('/{return}', [BookReturnController::class, 'destroy'])->name('destroy');
+    });
+
     // Profil Pengguna
     Route::get('/profil', [ProfileController::class, 'index'])->name('profile');
     Route::post('/profil', [ProfileController::class, 'update'])->name('profile.update');
