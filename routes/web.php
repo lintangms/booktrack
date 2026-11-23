@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookReturnController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\DashboardController;
