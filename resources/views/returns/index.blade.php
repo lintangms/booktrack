@@ -182,6 +182,7 @@
     <h1 class="page-title">Pengembalian & Denda</h1>
     <p class="page-subtitle">Modul CRUD 4: Proses pengembalian buku, kalkulasi denda keterlambatan, dan pemeriksaan fisik koleksi.</p>
   </div>
+  @if(Auth::check() && Auth::user()->isAdmin())
   <div>
     <button type="button" class="btn-primary-action" id="openAddReturnModal">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -191,6 +192,7 @@
       <span>Kembalikan Buku</span>
     </button>
   </div>
+  @endif
 </div>
 
 <section class="books-summary-card">
@@ -266,7 +268,9 @@
         <th style="width: 12%;">TGL KEMBALI</th>
         <th style="width: 10%;">KONDISI</th>
         <th style="width: 12%;">DENDA</th>
-        <th style="width: 10%; text-align: center;">AKSI</th>
+        @if(Auth::check() && Auth::user()->isAdmin())
+          <th style="width: 10%; text-align: center;">AKSI</th>
+        @endif
       </tr>
     </thead>
     <tbody>
@@ -303,6 +307,7 @@
               @endif
             </div>
           </td>
+          @if(Auth::check() && Auth::user()->isAdmin())
           <td>
             <div class="action-btn-group" style="justify-content: center;">
               <!-- Tombol Edit (Update) -->
@@ -336,10 +341,11 @@
               </form>
             </div>
           </td>
+          @endif
         </tr>
       @empty
         <tr>
-          <td colspan="7" style="text-align: center; padding: 32px; color: #64748b;">
+          <td colspan="{{ Auth::check() && Auth::user()->isAdmin() ? 7 : 6 }}" style="text-align: center; padding: 32px; color: #64748b;">
             Tidak ditemukan data transaksi pengembalian yang sesuai.
           </td>
         </tr>
@@ -348,6 +354,7 @@
   </table>
 </section>
 
+@if(Auth::check() && Auth::user()->isAdmin())
 <!-- MODAL PROSES PENGEMBALIAN BUKU (CREATE) -->
 <div class="modal-overlay" id="addReturnModal">
   <div class="modal-box">
@@ -436,6 +443,7 @@
     </form>
   </div>
 </div>
+@endif
 @endsection
 
 @section('scripts')

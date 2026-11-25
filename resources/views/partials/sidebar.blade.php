@@ -29,6 +29,7 @@
           <span class="nav-label">Data Buku</span>
         </a>
       </li>
+      @if(Auth::check() && Auth::user()->isAdmin())
       <li class="nav-item">
         <a href="{{ route('members.index') }}" class="nav-link {{ request()->routeIs('members.*') ? 'active' : '' }}">
           <span class="nav-indicator"></span>
@@ -38,9 +39,10 @@
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
-          <span class="nav-label">Data Anggota</span>
+          <span class="nav-label">Data Pengunjung</span>
         </a>
       </li>
+      @endif
       <li class="nav-item">
         <a href="{{ route('loans.index') }}" class="nav-link {{ request()->routeIs('loans.*') ? 'active' : '' }}">
           <span class="nav-indicator"></span>
@@ -59,16 +61,6 @@
             <path d="M3 3v5h5"></path>
           </svg>
           <span class="nav-label">Pengembalian</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="{{ route('books.index') }}" class="nav-link">
-          <span class="nav-indicator"></span>
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <span class="nav-label">Cari Buku</span>
         </a>
       </li>
     </ul>

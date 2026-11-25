@@ -6,6 +6,7 @@ use App\Models\BookReturn;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BookReturnController extends Controller
@@ -17,6 +18,10 @@ class BookReturnController extends Controller
     public function index(Request $request)
     {
         $query = BookReturn::with(['loan.user', 'loan.book'])->latest();
+
+        if (!Auth::user()->isAdmin()) {
+            $query->whereHas('loan', fn ($q) => $q->where('user_id', Auth::id()));
+        }
 
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
@@ -36,23 +41,39 @@ class BookReturnController extends Controller
 
         $returns = $query->paginate(10)->withQueryString();
 
-        $stats = [
-            'total'      => BookReturn::count(),
-            'paid_fine'  => (int) BookReturn::where('fine_status', 'Lunas')->sum('fine_amount'),
-            'unpaid'     => (int) BookReturn::where('fine_status', 'Belum Lunas')->sum('fine_amount'),
-            'good_books' => BookReturn::where('condition', 'Baik')->count(),
-        ];
+        if (Auth::user()->isAdmin()) {
+            $stats = [
+                'total'      => BookReturn::count(),
+                'paid_fine'  => (int) BookReturn::where('fine_status', 'Lunas')->sum('fine_amount'),
+                'unpaid'     => (int) BookReturn::where('fine_status', 'Belum Lunas')->sum('fine_amount'),
+                'good_books' => BookReturn::where('condition', 'Baik')->count(),
+            ];
 
-        $activeLoans = Loan::with(['user', 'book'])
-            ->where('status', '!=', 'Dikembalikan')
-            ->latest()
-            ->get();
+            $activeLoans = Loan::with(['user', 'book'])
+                ->where('status', '!=', 'Dikembalikan')
+                ->latest()
+                ->get();
+        } else {
+            $userReturnQuery = BookReturn::whereHas('loan', fn ($q) => $q->where('user_id', Auth::id()));
+            $stats = [
+                'total'      => (clone $userReturnQuery)->count(),
+                'paid_fine'  => (int) (clone $userReturnQuery)->where('fine_status', 'Lunas')->sum('fine_amount'),
+                'unpaid'     => (int) (clone $userReturnQuery)->where('fine_status', 'Belum Lunas')->sum('fine_amount'),
+                'good_books' => (clone $userReturnQuery)->where('condition', 'Baik')->count(),
+            ];
+
+            $activeLoans = collect();
+        }
 
         return view('returns.index', compact('returns', 'stats', 'activeLoans'));
     }
 
     public function store(Request $request)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Pengembalian buku hanya dapat diproses oleh Administrator.');
+        }
+
         $data = $request->validate([
             'loan_id'     => ['required', 'exists:loans,id'],
             'return_date' => ['required', 'date'],
@@ -112,6 +133,10 @@ class BookReturnController extends Controller
 
     public function update(Request $request, BookReturn $return)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Data pengembalian hanya dapat diubah oleh Administrator.');
+        }
+
         $data = $request->validate([
             'fine_status' => ['required', 'in:Lunas,Belum Lunas,Bebas Denda'],
             'notes'       => ['nullable', 'string', 'max:1000'],
@@ -131,6 +156,10 @@ class BookReturnController extends Controller
 
     public function destroy(BookReturn $return)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Arsip pengembalian hanya dapat dihapus oleh Administrator.');
+        }
+
         $return->delete();
 
         return redirect()->route('returns.index')

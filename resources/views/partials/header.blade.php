@@ -20,7 +20,7 @@
       <div class="user-avatar-circle">{{ Auth::user() ? Auth::user()->initials : 'AP' }}</div>
       <div class="user-details">
         <span class="user-name">{{ Auth::user() ? Auth::user()->name : 'Pengguna' }}</span>
-        <span class="user-role">{{ Auth::user() ? Auth::user()->role : 'Anggota' }}</span>
+        <span class="user-role">{{ Auth::user() ? Auth::user()->role : 'Pengunjung' }}</span>
       </div>
       <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="6 9 12 15 18 9"></polyline>

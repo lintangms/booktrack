@@ -57,8 +57,8 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
             'fullname.required' => 'Nama lengkap wajib diisi.',
-            'member_id.required' => 'Nomor Anggota / ID wajib diisi.',
-            'member_id.unique' => 'Nomor Anggota / ID sudah terdaftar.',
+            'member_id.required' => 'Nomor Pengunjung / ID wajib diisi.',
+            'member_id.unique' => 'Nomor Pengunjung / ID sudah terdaftar.',
             'email.required' => 'Email wajib diisi.',
             'email.unique' => 'Email ini sudah terdaftar. Silakan gunakan email lain.',
             'password.required' => 'Kata sandi wajib diisi.',
@@ -71,7 +71,7 @@ class AuthController extends Controller
             'member_id' => $validated['member_id'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => 'Anggota',
+            'role' => 'Pengunjung',
         ]);
 
         Auth::login($user);

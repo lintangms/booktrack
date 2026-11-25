@@ -13,12 +13,23 @@ class DashboardController extends Controller
     public function index()
     {
         $currentUser = Auth::user();
+        $isAdmin = $currentUser && $currentUser->isAdmin();
 
         // Statistik
         $totalBooks = Book::sum('stock');
         $totalMembers = User::count();
-        $borrowedBooks = Loan::whereIn('status', ['borrowed', 'Dipinjam'])->count();
-        $overdueBooks = Loan::whereIn('status', ['overdue', 'Terlambat'])->count();
+
+        if ($isAdmin) {
+            $borrowedBooks = Loan::whereIn('status', ['borrowed', 'Dipinjam'])->count();
+            $overdueBooks = Loan::whereIn('status', ['overdue', 'Terlambat'])->count();
+        } else {
+            $borrowedBooks = Loan::where('user_id', $currentUser->id)
+                ->whereIn('status', ['borrowed', 'Dipinjam'])
+                ->count();
+            $overdueBooks = Loan::where('user_id', $currentUser->id)
+                ->whereIn('status', ['overdue', 'Terlambat'])
+                ->count();
+        }
 
         // Aktivitas Peminjaman per bulan (data 6 bulan)
         $chartData = [

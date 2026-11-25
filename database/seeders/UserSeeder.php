@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
                             'name' => $u['fullname'] ?? $u['name'] ?? 'User',
                             'member_id' => $u['member_id'] ?? null,
                             'password' => $u['password'], // Already bcrypt-hashed
-                            'role' => $u['role'] ?? 'Anggota',
+                            'role' => $u['role'] ?? 'Pengunjung',
                             'created_at' => $u['created_at'] ?? now(),
                             'updated_at' => now(),
                         ]

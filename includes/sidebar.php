@@ -54,16 +54,6 @@ function isActive($pageName, $target) {
           <span class="nav-label">Pengembalian</span>
         </a>
       </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link <?= isActive($currentPage ?? '', 'cari-buku') ?>">
-          <span class="nav-indicator"></span>
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <span class="nav-label">Cari Buku</span>
-        </a>
-      </li>
     </ul>
   </div>
 

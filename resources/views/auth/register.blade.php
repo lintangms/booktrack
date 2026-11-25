@@ -64,7 +64,7 @@
 
       <div class="form-group">
         <label for="member_id" class="form-label">
-          Nomor Anggota / ID <span class="required-star">*</span>
+          Nomor Pengunjung / ID <span class="required-star">*</span>
         </label>
         <input 
           type="text" 

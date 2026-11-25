@@ -241,6 +241,7 @@
     <h1 class="page-title">Transaksi Peminjaman</h1>
     <p class="page-subtitle">Kelola riwayat dan transaksi peminjaman buku perpustakaan.</p>
   </div>
+  @if(Auth::check() && Auth::user()->isAdmin())
   <div>
     <button type="button" class="btn-primary-action" id="openAddLoanModal">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -250,6 +251,7 @@
       <span>Catat Peminjaman</span>
     </button>
   </div>
+  @endif
 </div>
 
 <!-- Card Ringkasan Statistik -->
@@ -316,7 +318,9 @@
         <th style="width: 13%;">TGL PINJAM</th>
         <th style="width: 13%;">JATUH TEMPO</th>
         <th style="width: 10%;">STATUS</th>
-        <th style="width: 14%; text-align: center;">AKSI</th>
+        @if(Auth::check() && Auth::user()->isAdmin())
+          <th style="width: 14%; text-align: center;">AKSI</th>
+        @endif
       </tr>
     </thead>
     <tbody>
@@ -339,7 +343,7 @@
             <div style="display: flex; flex-direction: column;">
               <span style="font-weight: 600; color: #1e293b;">{{ $loan->user->name ?? 'User Tidak Diketahui' }}</span>
               <span style="font-size: 0.775rem; color: #64748b;">
-                {{ $loan->user->member_id ?? $loan->user->email ?? 'Anggota' }}
+                {{ $loan->user->member_id ?? $loan->user->email ?? 'Pengunjung' }}
               </span>
             </div>
           </td>
@@ -385,6 +389,7 @@
               <span>{{ $displayStatus }}</span>
             </span>
           </td>
+          @if(Auth::check() && Auth::user()->isAdmin())
           <td>
             <div class="action-btn-group" style="justify-content: center;">
               <button 
@@ -419,10 +424,11 @@
               </form>
             </div>
           </td>
+          @endif
         </tr>
       @empty
         <tr>
-          <td colspan="7" style="text-align: center; padding: 36px; color: #64748b;">
+          <td colspan="{{ Auth::check() && Auth::user()->isAdmin() ? 7 : 6 }}" style="text-align: center; padding: 36px; color: #64748b;">
             Belum ada data transaksi peminjaman yang tercatat.
           </td>
         </tr>
@@ -431,6 +437,7 @@
   </table>
 </section>
 
+@if(Auth::check() && Auth::user()->isAdmin())
 <!-- Modal Catat Peminjaman Baru -->
 <div class="modal-overlay" id="addLoanModal">
   <div class="modal-box">
@@ -442,9 +449,9 @@
       @csrf
       <div class="modal-body-custom">
         <div class="form-field-custom">
-          <label for="loanUser">Nama Anggota / Peminjam *</label>
+          <label for="loanUser">Nama Pengunjung / Peminjam *</label>
           <select id="loanUser" name="user_id" required>
-            <option value="">-- Pilih Anggota Peminjam --</option>
+            <option value="">-- Pilih Pengunjung Peminjam --</option>
             @foreach ($users as $user)
               <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
                 {{ $user->name }} ({{ $user->member_id ?? $user->email }})
@@ -544,6 +551,7 @@
     </form>
   </div>
 </div>
+@endif
 @endsection
 
 @section('scripts')

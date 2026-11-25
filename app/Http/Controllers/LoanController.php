@@ -7,6 +7,7 @@ use App\Models\Loan;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class LoanController extends Controller
@@ -23,6 +24,11 @@ class LoanController extends Controller
             ->update(['status' => 'Terlambat']);
 
         $query = Loan::with(['user', 'book']);
+
+        // Jika bukan Administrator, batasi hanya peminjaman miliknya sendiri
+        if (!Auth::user()->isAdmin()) {
+            $query->where('user_id', Auth::id());
+        }
 
         // Pencarian: nama anggota atau judul/penulis buku
         if ($request->filled('search')) {
@@ -47,14 +53,22 @@ class LoanController extends Controller
         $loans = $query->orderBy('id', 'desc')->get();
 
         // Statistik ringkasan
-        $totalLoans = Loan::count();
-        $borrowedCount = Loan::where('status', 'Dipinjam')->count();
-        $overdueCount = Loan::where('status', 'Terlambat')->count();
-        $returnedCount = Loan::where('status', 'Dikembalikan')->count();
-
-        // Data pendukung untuk modal pencatatan peminjaman
-        $users = User::orderBy('name', 'asc')->get();
-        $availableBooks = Book::where('available', '>', 0)->orderBy('title', 'asc')->get();
+        if (Auth::user()->isAdmin()) {
+            $totalLoans = Loan::count();
+            $borrowedCount = Loan::where('status', 'Dipinjam')->count();
+            $overdueCount = Loan::where('status', 'Terlambat')->count();
+            $returnedCount = Loan::where('status', 'Dikembalikan')->count();
+            $users = User::orderBy('name', 'asc')->get();
+            $availableBooks = Book::where('available', '>', 0)->orderBy('title', 'asc')->get();
+        } else {
+            $userLoansQuery = Loan::where('user_id', Auth::id());
+            $totalLoans = (clone $userLoansQuery)->count();
+            $borrowedCount = (clone $userLoansQuery)->where('status', 'Dipinjam')->count();
+            $overdueCount = (clone $userLoansQuery)->where('status', 'Terlambat')->count();
+            $returnedCount = (clone $userLoansQuery)->where('status', 'Dikembalikan')->count();
+            $users = collect([Auth::user()]);
+            $availableBooks = collect();
+        }
 
         return view('loans.index', compact(
             'loans',
@@ -72,6 +86,10 @@ class LoanController extends Controller
      */
     public function store(Request $request)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Transaksi peminjaman hanya dapat dicatat oleh Administrator.');
+        }
+
         $validated = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
             'book_id' => ['required', 'exists:books,id'],
@@ -120,6 +138,10 @@ class LoanController extends Controller
      */
     public function update(Request $request, Loan $loan)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Transaksi peminjaman hanya dapat diperbarui oleh Administrator.');
+        }
+
         $validated = $request->validate([
             'due_date' => ['required', 'date'],
             'status' => ['required', 'in:Dipinjam,Terlambat,Dikembalikan'],
@@ -166,6 +188,10 @@ class LoanController extends Controller
      */
     public function destroy(Loan $loan)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Transaksi peminjaman hanya dapat dihapus oleh Administrator.');
+        }
+
         $loanId = $loan->id;
 
         DB::transaction(function () use ($loan) {

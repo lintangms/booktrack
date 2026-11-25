@@ -13,6 +13,7 @@ class LoanTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected User $admin;
     protected User $user;
     protected Book $book;
 
@@ -20,11 +21,19 @@ class LoanTest extends TestCase
     {
         parent::setUp();
 
+        $this->admin = User::factory()->create([
+            'name' => 'Admin Test',
+            'email' => 'admin@booktrack.id',
+            'role' => 'Administrator',
+            'status' => 'Aktif',
+        ]);
+
         $this->user = User::factory()->create([
             'name' => 'Budi Santoso',
             'email' => 'budi@example.com',
             'member_id' => 'MBR-001',
-            'role' => 'Anggota',
+            'role' => 'Pengunjung',
+            'status' => 'Aktif',
         ]);
 
         $this->book = Book::create([
@@ -63,11 +72,94 @@ class LoanTest extends TestCase
         $response->assertSee('Dipinjam');
     }
 
-    public function test_loan_creation_decrements_book_available_stock(): void
+    public function test_pengunjung_only_sees_their_own_loans(): void
+    {
+        $otherUser = User::factory()->create([
+            'name' => 'Other Pengunjung',
+            'email' => 'other@example.com',
+            'role' => 'Pengunjung',
+        ]);
+
+        $bookBudi = Book::create([
+            'title' => 'Buku Khusus Budi',
+            'author' => 'Penulis Budi',
+            'isbn' => '978-000-1111-22-1',
+            'category' => 'Fiksi',
+            'stock' => 5,
+            'available' => 3,
+        ]);
+
+        $bookOther = Book::create([
+            'title' => 'Buku Rahasia Pengguna Lain',
+            'author' => 'Penulis Lain',
+            'isbn' => '978-000-3333-44-2',
+            'category' => 'Sains',
+            'stock' => 5,
+            'available' => 3,
+        ]);
+
+        Loan::create([
+            'user_id' => $this->user->id,
+            'book_id' => $bookBudi->id,
+            'loan_date' => Carbon::today()->subDays(1)->toDateString(),
+            'due_date' => Carbon::today()->addDays(6)->toDateString(),
+            'status' => 'Dipinjam',
+        ]);
+
+        Loan::create([
+            'user_id' => $otherUser->id,
+            'book_id' => $bookOther->id,
+            'loan_date' => Carbon::today()->subDays(2)->toDateString(),
+            'due_date' => Carbon::today()->addDays(5)->toDateString(),
+            'status' => 'Dipinjam',
+        ]);
+
+        // Pengunjung login: hanya lihat miliknya
+        $response = $this->actingAs($this->user)->get('/peminjaman');
+        $response->assertStatus(200);
+        $response->assertSee('Buku Khusus Budi');
+        $response->assertDontSee('Buku Rahasia Pengguna Lain');
+
+        // Admin login: bisa lihat semuanya
+        $adminResponse = $this->actingAs($this->admin)->get('/peminjaman');
+        $adminResponse->assertStatus(200);
+        $adminResponse->assertSee('Buku Khusus Budi');
+        $adminResponse->assertSee('Buku Rahasia Pengguna Lain');
+    }
+
+    public function test_pengunjung_cannot_create_update_or_delete_loans(): void
+    {
+        $loan = Loan::create([
+            'user_id' => $this->user->id,
+            'book_id' => $this->book->id,
+            'loan_date' => Carbon::today()->toDateString(),
+            'due_date' => Carbon::today()->addDays(7)->toDateString(),
+            'status' => 'Dipinjam',
+        ]);
+
+        // Pengunjung mencoba store
+        $this->actingAs($this->user)->post('/peminjaman', [
+            'user_id' => $this->user->id,
+            'book_id' => $this->book->id,
+            'loan_date' => Carbon::today()->toDateString(),
+            'due_date' => Carbon::today()->addDays(7)->toDateString(),
+        ])->assertStatus(403);
+
+        // Pengunjung mencoba update
+        $this->actingAs($this->user)->put('/peminjaman/' . $loan->id, [
+            'due_date' => Carbon::today()->addDays(14)->toDateString(),
+            'status' => 'Dipinjam',
+        ])->assertStatus(403);
+
+        // Pengunjung mencoba delete
+        $this->actingAs($this->user)->delete('/peminjaman/' . $loan->id)->assertStatus(403);
+    }
+
+    public function test_admin_loan_creation_decrements_book_available_stock(): void
     {
         $initialAvailable = $this->book->available;
 
-        $response = $this->actingAs($this->user)->post('/peminjaman', [
+        $response = $this->actingAs($this->admin)->post('/peminjaman', [
             'user_id' => $this->user->id,
             'book_id' => $this->book->id,
             'loan_date' => Carbon::today()->toDateString(),
@@ -90,7 +182,7 @@ class LoanTest extends TestCase
     {
         $this->book->update(['available' => 0]);
 
-        $response = $this->actingAs($this->user)->post('/peminjaman', [
+        $response = $this->actingAs($this->admin)->post('/peminjaman', [
             'user_id' => $this->user->id,
             'book_id' => $this->book->id,
             'loan_date' => Carbon::today()->toDateString(),
@@ -101,7 +193,7 @@ class LoanTest extends TestCase
         $this->assertEquals(0, Loan::count());
     }
 
-    public function test_loan_update_status_to_dikembalikan_increments_available_stock(): void
+    public function test_admin_loan_update_status_to_dikembalikan_increments_available_stock(): void
     {
         $loan = Loan::create([
             'user_id' => $this->user->id,
@@ -113,7 +205,7 @@ class LoanTest extends TestCase
 
         $initialAvailable = $this->book->available;
 
-        $response = $this->actingAs($this->user)->put('/peminjaman/' . $loan->id, [
+        $response = $this->actingAs($this->admin)->put('/peminjaman/' . $loan->id, [
             'due_date' => $loan->due_date->format('Y-m-d'),
             'status' => 'Dikembalikan',
             'return_date' => Carbon::today()->toDateString(),
@@ -131,7 +223,7 @@ class LoanTest extends TestCase
         $this->assertNotNull($loan->return_date);
     }
 
-    public function test_deleting_active_loan_restores_book_available_stock(): void
+    public function test_admin_deleting_active_loan_restores_book_available_stock(): void
     {
         $loan = Loan::create([
             'user_id' => $this->user->id,
@@ -143,7 +235,7 @@ class LoanTest extends TestCase
 
         $initialAvailable = $this->book->available;
 
-        $response = $this->actingAs($this->user)->delete('/peminjaman/' . $loan->id);
+        $response = $this->actingAs($this->admin)->delete('/peminjaman/' . $loan->id);
         $response->assertRedirect('/peminjaman');
         $response->assertSessionHas('success');
 

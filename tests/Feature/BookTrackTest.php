@@ -98,4 +98,40 @@ class BookTrackTest extends TestCase
             'name' => 'Alya Prameswari, S.IIP.',
         ]);
     }
+
+    public function test_pengunjung_cannot_add_or_modify_books(): void
+    {
+        $pengunjung = User::factory()->create([
+            'role' => 'Pengunjung',
+        ]);
+
+        $book = Book::first();
+
+        // Pengunjung lihat buku diperbolehkan (read-only)
+        $this->actingAs($pengunjung)->get('/data-buku')->assertStatus(200);
+
+        // Pengunjung tambah buku ditolak
+        $this->actingAs($pengunjung)->post('/data-buku', [
+            'title' => 'Buku Terlarang',
+            'author' => 'Anonim',
+            'isbn' => '999-999-9999-99-9',
+            'category' => 'Umum',
+            'stock' => 5,
+        ])->assertStatus(403);
+
+        // Pengunjung ubah buku ditolak
+        if ($book) {
+            $this->actingAs($pengunjung)->put('/data-buku/' . $book->id, [
+                'title' => 'Judul Baru',
+                'author' => 'Penulis Baru',
+                'isbn' => $book->isbn,
+                'category' => $book->category,
+                'stock' => 10,
+                'available' => 10,
+            ])->assertStatus(403);
+
+            // Pengunjung hapus buku ditolak
+            $this->actingAs($pengunjung)->delete('/data-buku/' . $book->id)->assertStatus(403);
+        }
+    }
 }

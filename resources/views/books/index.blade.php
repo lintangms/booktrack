@@ -124,6 +124,7 @@
     <h1 class="page-title">Data Buku</h1>
     <p class="page-subtitle">Kelola koleksi buku yang tersedia di perpustakaan.</p>
   </div>
+  @if(Auth::check() && Auth::user()->isAdmin())
   <div>
     <button type="button" class="btn-primary-action" id="openAddBookModal">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -133,6 +134,7 @@
       <span>Tambah Buku</span>
     </button>
   </div>
+  @endif
 </div>
 
 <section class="books-summary-card">
@@ -235,6 +237,7 @@
   </table>
 </section>
 
+@if(Auth::check() && Auth::user()->isAdmin())
 <!-- Modal Tambah Buku -->
 <div class="modal-overlay" id="addBookModal">
   <div class="modal-box">
@@ -290,6 +293,7 @@
     </form>
   </div>
 </div>
+@endif
 @endsection
 
 @section('scripts')

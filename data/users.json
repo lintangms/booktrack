@@ -12,7 +12,7 @@
         "member_id": "231104028",
         "email": "lintang@kampus.ac.id",
         "password": "$2y$10$mXcPK5xz6Aa0hxMi9scV2uqSUOfMaCr5ENWE6gauHa6D8IjWWSxnK",
-        "role": "Anggota",
+        "role": "Pengunjung",
         "created_at": "2026-10-11 16:55:16"
     },
     {
@@ -20,7 +20,7 @@
         "member_id": "231109999",
         "email": "rizky@kampus.ac.id",
         "password": "$2y$10$h.QBkabtFyonGrSe734Tge6nPN4J/po6qS5Dm0wqmDvMAibvGFXJa",
-        "role": "Anggota",
+        "role": "Pengunjung",
         "created_at": "2026-10-11 16:56:34"
     },
     {
@@ -28,7 +28,7 @@
         "member_id": "113333555555",
         "email": "elang@gmail.com",
         "password": "$2y$10$zgnJkX73MsWlX7Q9h7TtS.NcrYXQWr10.ZKGJcXqkEliO0W7LXogy",
-        "role": "Anggota",
+        "role": "Pengunjung",
         "created_at": "2026-10-11 16:59:39"
     },
     {
@@ -36,7 +36,7 @@
         "member_id": "12354",
         "email": "lintangmuhammadshiddiq@gmail.com",
         "password": "$2y$10$vRnm1PDkwX0ctL2Kk94n6e0AUbeRQlj6akUc/qdqOsFItT8cKhyWC",
-        "role": "Anggota",
+        "role": "Pengunjung",
         "created_at": "2026-10-11 20:07:37"
     }
 ]

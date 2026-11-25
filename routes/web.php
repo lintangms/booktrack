@@ -39,8 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/data-buku/{book}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/data-buku/{book}', [BookController::class, 'destroy'])->name('books.destroy');
 
-    // Data Anggota Perpustakaan
-    Route::prefix('data-anggota')->name('members.')->group(function () {
+    // Data Pengunjung Perpustakaan (Khusus Administrator)
+    Route::prefix('data-anggota')->name('members.')->middleware('role:Administrator')->group(function () {
         Route::get('/', [MemberController::class, 'index'])->name('index');
         Route::post('/', [MemberController::class, 'store'])->name('store');
         Route::put('/{member}', [MemberController::class, 'update'])->name('update');

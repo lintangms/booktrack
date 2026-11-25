@@ -40,7 +40,7 @@
       </svg>
     </div>
     <div class="stat-info">
-      <span class="stat-label">Total Anggota</span>
+      <span class="stat-label">Total Pengunjung</span>
       <span class="stat-value">{{ $totalMembers }}</span>
     </div>
   </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -45,6 +46,10 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Hanya Administrator yang dapat mengelola koleksi buku.');
+        }
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
@@ -74,6 +79,10 @@ class BookController extends Controller
 
     public function update(Request $request, Book $book)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Hanya Administrator yang dapat mengelola koleksi buku.');
+        }
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
@@ -91,6 +100,10 @@ class BookController extends Controller
 
     public function destroy(Book $book)
     {
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Akses ditolak. Hanya Administrator yang dapat mengelola koleksi buku.');
+        }
+
         $title = $book->title;
         $book->delete();
 

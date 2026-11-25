@@ -13,14 +13,21 @@ class RoleMiddleware
 
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        $user = auth('api')->user();
+        $user = $request->user() ?: auth('api')->user();
 
         if (!$user) {
-            return $this->error('Token tidak valid atau tidak ada', 401);
+            if ($request->is('api/*')) {
+                return $this->error('Token tidak valid atau tidak ada', 401);
+            }
+            return redirect()->route('login');
         }
 
-        if (!in_array($user->role, $roles, true)) {
-            return $this->error('Anda tidak memiliki akses ke sumber daya ini', 403);
+        $allowedRoles = array_map('strtolower', $roles);
+        if (!in_array(strtolower($user->role), $allowedRoles, true)) {
+            if ($request->is('api/*')) {
+                return $this->error('Anda tidak memiliki akses ke sumber daya ini', 403);
+            }
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini.');
         }
 
         return $next($request);

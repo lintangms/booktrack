@@ -35,7 +35,7 @@ class MemberTest extends TestCase
             'member_id' => '231104028',
             'department' => 'Teknik Informatika',
             'phone' => '08123456789',
-            'role' => 'Anggota',
+            'role' => 'Pengunjung',
             'status' => 'Aktif',
         ]);
     }
@@ -46,12 +46,20 @@ class MemberTest extends TestCase
         $response->assertRedirect('/login');
     }
 
+    public function test_pengunjung_cannot_access_or_crud_members_page(): void
+    {
+        $this->actingAs($this->member)->get('/data-anggota')->assertStatus(403);
+        $this->actingAs($this->member)->post('/data-anggota', ['name' => 'Test'])->assertStatus(403);
+        $this->actingAs($this->member)->put("/data-anggota/{$this->member->id}", ['name' => 'Test'])->assertStatus(403);
+        $this->actingAs($this->member)->delete("/data-anggota/{$this->member->id}")->assertStatus(403);
+    }
+
     public function test_authenticated_user_can_view_members_index(): void
     {
         $response = $this->actingAs($this->admin)->get('/data-anggota');
 
         $response->assertStatus(200);
-        $response->assertSee('Data Anggota Perpustakaan');
+        $response->assertSee('Data Pengunjung Perpustakaan');
         $response->assertSee('Lintang Maulana');
         $response->assertSee('231104028');
         $response->assertSee('Teknik Informatika');
@@ -100,7 +108,7 @@ class MemberTest extends TestCase
             'department' => 'Ilmu Komunikasi',
             'phone' => '08987654321',
             'status' => 'Aktif',
-            'role' => 'Anggota',
+            'role' => 'Pengunjung',
         ]);
 
         $created = User::where('email', 'ahmad@kampus.ac.id')->first();
