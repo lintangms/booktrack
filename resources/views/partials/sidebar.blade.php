@@ -65,17 +65,6 @@
         <a href="{{ route('books.index') }}" class="nav-link">
           <span class="nav-indicator"></span>
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 20V10"></path>
-            <path d="M12 20V4"></path>
-            <path d="M6 20v-6"></path>
-          </svg>
-          <span class="nav-label">Status Buku</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="{{ route('books.index') }}" class="nav-link">
-          <span class="nav-indicator"></span>
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
