@@ -216,7 +216,7 @@
 
 <!-- Filter & Search Toolbar -->
 <section class="table-toolbar">
-  <form method="GET" action="{{ route('returns.index') }}" style="display: flex; gap: 12px; flex: 1; flex-wrap: wrap;">
+  <form method="GET" action="{{ Auth::user()->isAdmin() ? route('admin.returns.index') : route('user.returns.index') }}" style="display: flex; gap: 12px; flex: 1; flex-wrap: wrap;">
     <div class="search-box-wrapper" style="flex: 1; min-width: 240px;">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"></circle>
@@ -246,7 +246,7 @@
     </select>
 
     @if(request('search') || request('condition') || request('fine_status'))
-      <a href="{{ route('returns.index') }}" class="btn-reset-filter" style="text-decoration: none;">
+      <a href="{{ Auth::user()->isAdmin() ? route('admin.returns.index') : route('user.returns.index') }}" class="btn-reset-filter" style="text-decoration: none;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
           <path d="M3 3v5h5"></path>
@@ -329,7 +329,7 @@
               </button>
 
               <!-- Tombol Hapus (Delete) -->
-              <form action="{{ route('returns.destroy', $ret->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pengembalian \'{{ $ret->return_code }}\'?');">
+              <form action="{{ route('admin.returns.destroy', $ret->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pengembalian \'{{ $ret->return_code }}\'?');">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn-icon-action btn-icon-danger" title="Hapus Pengembalian">
@@ -362,7 +362,7 @@
       <h3>Proses Pengembalian Buku</h3>
       <button type="button" class="btn-close-custom" id="closeAddReturnModal">&times;</button>
     </div>
-    <form action="{{ route('returns.store') }}" method="POST">
+    <form action="{{ route('admin.returns.store') }}" method="POST">
       @csrf
       <div class="modal-body-custom">
         <div class="form-field-custom">
@@ -469,7 +469,7 @@
     document.querySelectorAll('.btn-edit-return').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.dataset.id;
-        editForm.action = `/pengembalian/${id}`;
+        editForm.action = `/admin/pengembalian/${id}`;
         document.getElementById('edit_return_code').value = btn.dataset.code || '';
         document.getElementById('edit_fine_status').value = btn.dataset.status || 'Bebas Denda';
         document.getElementById('edit_return_notes').value = btn.dataset.notes || '';

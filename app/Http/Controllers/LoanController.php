@@ -129,7 +129,7 @@ class LoanController extends Controller
             ]);
         });
 
-        return redirect()->route('loans.index')
+        return redirect()->route('admin.loans.index')
             ->with('success', 'Transaksi peminjaman buku berhasil dicatat.');
     }
 
@@ -179,7 +179,7 @@ class LoanController extends Controller
             $loan->update($validated);
         });
 
-        return redirect()->route('loans.index')
+        return redirect()->route('admin.loans.index')
             ->with('success', 'Data transaksi peminjaman #' . $loan->id . ' berhasil diperbarui.');
     }
 
@@ -204,7 +204,7 @@ class LoanController extends Controller
             $loan->delete();
         });
 
-        return redirect()->route('loans.index')
+        return redirect()->route('admin.loans.index')
             ->with('success', 'Transaksi peminjaman #' . $loanId . ' berhasil dihapus.');
     }
 }

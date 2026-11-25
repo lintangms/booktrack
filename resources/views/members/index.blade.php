@@ -606,7 +606,7 @@
       <h3>Tambah Pengunjung Perpustakaan</h3>
       <button type="button" class="btn-close-custom" id="closeAddMemberModal">&times;</button>
     </div>
-    <form action="{{ route('members.store') }}" method="POST">
+    <form action="{{ route('admin.members.store') }}" method="POST">
       @csrf
       <div class="modal-body-custom">
         <div class="info-alert-box">
@@ -805,7 +805,7 @@
         const phone = button.getAttribute('data-phone');
         const status = button.getAttribute('data-status');
 
-        editForm.action = `{{ url('/data-anggota') }}/${id}`;
+        editForm.action = `{{ url('/admin/data-pengunjung') }}/${id}`;
         document.getElementById('editName').value = name || '';
         document.getElementById('editMemberId').value = memberId || '';
         document.getElementById('editEmail').value = email || '';
@@ -824,7 +824,7 @@
         const id = button.getAttribute('data-id');
         const name = button.getAttribute('data-name');
 
-        deleteForm.action = `{{ url('/data-anggota') }}/${id}`;
+        deleteForm.action = `{{ url('/admin/data-pengunjung') }}/${id}`;
         if (deleteNameSpan) deleteNameSpan.textContent = `"${name}"`;
 
         deleteModal.classList.add('active');

@@ -58,14 +58,14 @@ class BookReturnTest extends TestCase
 
     public function test_admin_can_process_book_return_with_fine(): void
     {
-        $response = $this->actingAs($this->admin)->post('/pengembalian', [
+        $response = $this->actingAs($this->admin)->post('/admin/pengembalian', [
             'loan_id' => $this->loan->id,
             'return_date' => Carbon::today()->toDateString(),
             'condition' => 'Baik',
             'notes' => 'Dikembalikan tepat',
         ]);
 
-        $response->assertRedirect('/pengembalian');
+        $response->assertRedirect('/admin/pengembalian');
         $response->assertSessionHas('success');
 
         $this->loan->refresh();
@@ -109,25 +109,28 @@ class BookReturnTest extends TestCase
             'notes' => 'Pengembalian Rahasia Other',
         ]);
 
-        // Pengunjung view index: can only see own return
-        $response = $this->actingAs($this->user)->get('/pengembalian');
+        // Pengunjung view index: can only see own return di /user/pengembalian
+        $response = $this->actingAs($this->user)->get('/user/pengembalian');
         $response->assertStatus(200);
         $response->assertSee($this->loan->book->title);
         $response->assertDontSee('Pengembalian Rahasia Other');
 
+        // Pengunjung access admin returns ditolak
+        $this->actingAs($this->user)->get('/admin/pengembalian')->assertStatus(403);
+
         // Pengunjung cannot store return
-        $this->actingAs($this->user)->post('/pengembalian', [
+        $this->actingAs($this->user)->post('/admin/pengembalian', [
             'loan_id' => $this->loan->id,
             'return_date' => Carbon::today()->toDateString(),
             'condition' => 'Baik',
         ])->assertStatus(403);
 
         // Pengunjung cannot update return
-        $this->actingAs($this->user)->put('/pengembalian/' . $myReturn->id, [
+        $this->actingAs($this->user)->put('/admin/pengembalian/' . $myReturn->id, [
             'fine_status' => 'Lunas',
         ])->assertStatus(403);
 
         // Pengunjung cannot delete return
-        $this->actingAs($this->user)->delete('/pengembalian/' . $myReturn->id)->assertStatus(403);
+        $this->actingAs($this->user)->delete('/admin/pengembalian/' . $myReturn->id)->assertStatus(403);
     }
 }

@@ -411,7 +411,7 @@
                 <span>Edit</span>
               </button>
 
-              <form action="{{ route('loans.destroy', $loan) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan/menghapus transaksi peminjaman ini? Stok buku akan dikembalikan otomatis.')">
+              <form action="{{ route('admin.loans.destroy', $loan) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan/menghapus transaksi peminjaman ini? Stok buku akan dikembalikan otomatis.')">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn-table-action btn-delete" title="Hapus Transaksi">
@@ -445,7 +445,7 @@
       <h3>Catat Peminjaman Buku</h3>
       <button type="button" class="btn-close-custom" id="closeAddLoanModal">&times;</button>
     </div>
-    <form action="{{ route('loans.store') }}" method="POST">
+    <form action="{{ route('admin.loans.store') }}" method="POST">
       @csrf
       <div class="modal-body-custom">
         <div class="form-field-custom">
@@ -618,7 +618,7 @@
         const status = btn.getAttribute('data-status');
         const notes = btn.getAttribute('data-notes');
 
-        editForm.action = `{{ url('/peminjaman') }}/${id}`;
+        editForm.action = `{{ url('/admin/peminjaman') }}/${id}`;
         editInfoUser.textContent = user;
         editInfoBook.textContent = book;
         editDueDateInput.value = dueDate;

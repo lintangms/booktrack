@@ -42,10 +42,10 @@ class BookTrackTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertRedirect('/dashboard');
+        $response->assertRedirect('/admin/dashboard');
         $this->assertAuthenticatedAs($user);
 
-        $dashboardResponse = $this->actingAs($user)->get('/dashboard');
+        $dashboardResponse = $this->actingAs($user)->get('/admin/dashboard');
         $dashboardResponse->assertStatus(200);
         $dashboardResponse->assertSee('Alya Prameswari');
         $dashboardResponse->assertSee('Total Buku');
@@ -56,7 +56,7 @@ class BookTrackTest extends TestCase
     {
         $user = User::where('email', 'alya@booktrack.id')->first();
 
-        $response = $this->actingAs($user)->get('/data-buku');
+        $response = $this->actingAs($user)->get('/admin/data-buku');
         $response->assertStatus(200);
         $response->assertSee('Data Buku');
         $response->assertSee('Laskar Pelangi');
@@ -64,7 +64,7 @@ class BookTrackTest extends TestCase
 
         // Test tambah buku
         $newBookIsbn = '978-602-0000-00-1';
-        $createResponse = $this->actingAs($user)->post('/data-buku', [
+        $createResponse = $this->actingAs($user)->post('/admin/data-buku', [
             'title' => 'Negeri 5 Menara',
             'author' => 'Ahmad Fuadi',
             'isbn' => $newBookIsbn,
@@ -74,7 +74,7 @@ class BookTrackTest extends TestCase
             'theme' => 'cover-teal',
         ]);
 
-        $createResponse->assertRedirect('/data-buku');
+        $createResponse->assertRedirect('/admin/data-buku');
         $this->assertDatabaseHas('books', ['isbn' => $newBookIsbn]);
     }
 
@@ -107,11 +107,14 @@ class BookTrackTest extends TestCase
 
         $book = Book::first();
 
-        // Pengunjung lihat buku diperbolehkan (read-only)
-        $this->actingAs($pengunjung)->get('/data-buku')->assertStatus(200);
+        // Pengunjung lihat katalog diperbolehkan di /user/data-buku
+        $this->actingAs($pengunjung)->get('/user/data-buku')->assertStatus(200);
 
-        // Pengunjung tambah buku ditolak
-        $this->actingAs($pengunjung)->post('/data-buku', [
+        // Pengunjung mengakses area admin ditolak
+        $this->actingAs($pengunjung)->get('/admin/data-buku')->assertStatus(403);
+
+        // Pengunjung tambah buku di admin ditolak
+        $this->actingAs($pengunjung)->post('/admin/data-buku', [
             'title' => 'Buku Terlarang',
             'author' => 'Anonim',
             'isbn' => '999-999-9999-99-9',
@@ -121,7 +124,7 @@ class BookTrackTest extends TestCase
 
         // Pengunjung ubah buku ditolak
         if ($book) {
-            $this->actingAs($pengunjung)->put('/data-buku/' . $book->id, [
+            $this->actingAs($pengunjung)->put('/admin/data-buku/' . $book->id, [
                 'title' => 'Judul Baru',
                 'author' => 'Penulis Baru',
                 'isbn' => $book->isbn,
@@ -131,7 +134,7 @@ class BookTrackTest extends TestCase
             ])->assertStatus(403);
 
             // Pengunjung hapus buku ditolak
-            $this->actingAs($pengunjung)->delete('/data-buku/' . $book->id)->assertStatus(403);
+            $this->actingAs($pengunjung)->delete('/admin/data-buku/' . $book->id)->assertStatus(403);
         }
     }
 }

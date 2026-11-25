@@ -245,7 +245,7 @@
       <h3>Tambah Koleksi Buku Baru</h3>
       <button type="button" class="btn-close-custom" id="closeAddBookModal">&times;</button>
     </div>
-    <form action="{{ route('books.store') }}" method="POST">
+    <form action="{{ route('admin.books.store') }}" method="POST">
       @csrf
       <div class="modal-body-custom">
         <div class="form-field-custom">

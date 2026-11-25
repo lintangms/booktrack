@@ -12,7 +12,9 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return Auth::user()->isAdmin()
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('user.dashboard');
         }
         return view('auth.login');
     }
@@ -32,7 +34,8 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard'));
+            $target = Auth::user()->isAdmin() ? route('admin.dashboard') : route('user.dashboard');
+            return redirect()->intended($target);
         }
 
         return back()
@@ -43,7 +46,9 @@ class AuthController extends Controller
     public function showRegister()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return Auth::user()->isAdmin()
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('user.dashboard');
         }
         return view('auth.register');
     }
@@ -77,7 +82,7 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('dashboard')
+        return redirect()->route('user.dashboard')
             ->with('success', 'Pendaftaran berhasil! Selamat datang, ' . $user->name . '.');
     }
 

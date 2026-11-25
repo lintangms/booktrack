@@ -127,7 +127,7 @@ class BookReturnController extends Controller
             return back()->withInput()->with('error', $e->getMessage());
         }
 
-        return redirect()->route('returns.index')
+        return redirect()->route('admin.returns.index')
             ->with('success', 'Buku berhasil dikembalikan.');
     }
 
@@ -150,7 +150,7 @@ class BookReturnController extends Controller
 
         $return->update($data);
 
-        return redirect()->route('returns.index')
+        return redirect()->route('admin.returns.index')
             ->with('success', 'Data pengembalian berhasil diperbarui.');
     }
 
@@ -162,7 +162,7 @@ class BookReturnController extends Controller
 
         $return->delete();
 
-        return redirect()->route('returns.index')
+        return redirect()->route('admin.returns.index')
             ->with('success', 'Arsip pengembalian berhasil dihapus.');
     }
 }

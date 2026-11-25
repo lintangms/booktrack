@@ -22,4 +22,5 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
-Add-Content .gitignore "`n*.docx`n~`$*"
+*.docx
+~$*

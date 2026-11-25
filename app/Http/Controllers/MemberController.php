@@ -95,7 +95,7 @@ class MemberController extends Controller
 
         $user = User::create($validated);
 
-        return redirect()->route('members.index')
+        return redirect()->route('admin.members.index')
             ->with('success', 'Pengunjung perpustakaan "' . $user->name . '" berhasil didaftarkan dengan password default "password123".');
     }
 
@@ -140,7 +140,7 @@ class MemberController extends Controller
             $message .= ' Password telah direset ke default "password123".';
         }
 
-        return redirect()->route('members.index')->with('success', $message);
+        return redirect()->route('admin.members.index')->with('success', $message);
     }
 
     /**
@@ -154,7 +154,7 @@ class MemberController extends Controller
 
         // Proteksi: cegah pengguna yang sedang login menghapus akunnya sendiri
         if ($member->id === Auth::id()) {
-            return redirect()->route('members.index')
+            return redirect()->route('admin.members.index')
                 ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
@@ -164,14 +164,14 @@ class MemberController extends Controller
             ->count();
 
         if ($activeLoansCount > 0) {
-            return redirect()->route('members.index')
+            return redirect()->route('admin.members.index')
                 ->with('error', 'Tidak dapat menghapus pengunjung "' . $member->name . '" karena masih memiliki ' . $activeLoansCount . ' transaksi peminjaman aktif/belum dikembalikan.');
         }
 
         $name = $member->name;
         $member->delete();
 
-        return redirect()->route('members.index')
+        return redirect()->route('admin.members.index')
             ->with('success', 'Pengunjung perpustakaan "' . $name . '" berhasil dihapus dari sistem.');
     }
 }

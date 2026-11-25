@@ -49,8 +49,11 @@ class LoanTest extends TestCase
 
     public function test_guest_cannot_access_loans_page(): void
     {
-        $response = $this->get('/peminjaman');
+        $response = $this->get('/admin/peminjaman');
         $response->assertRedirect('/login');
+
+        $userResponse = $this->get('/user/peminjaman');
+        $userResponse->assertRedirect('/login');
     }
 
     public function test_authenticated_user_can_view_loans_index(): void
@@ -64,7 +67,7 @@ class LoanTest extends TestCase
             'notes' => 'Tugas sekolah',
         ]);
 
-        $response = $this->actingAs($this->user)->get('/peminjaman');
+        $response = $this->actingAs($this->user)->get('/user/peminjaman');
         $response->assertStatus(200);
         $response->assertSee('Transaksi Peminjaman');
         $response->assertSee('Laskar Pelangi');
@@ -114,14 +117,14 @@ class LoanTest extends TestCase
             'status' => 'Dipinjam',
         ]);
 
-        // Pengunjung login: hanya lihat miliknya
-        $response = $this->actingAs($this->user)->get('/peminjaman');
+        // Pengunjung login: hanya lihat miliknya di /user/peminjaman
+        $response = $this->actingAs($this->user)->get('/user/peminjaman');
         $response->assertStatus(200);
         $response->assertSee('Buku Khusus Budi');
         $response->assertDontSee('Buku Rahasia Pengguna Lain');
 
-        // Admin login: bisa lihat semuanya
-        $adminResponse = $this->actingAs($this->admin)->get('/peminjaman');
+        // Admin login: bisa lihat semuanya di /admin/peminjaman
+        $adminResponse = $this->actingAs($this->admin)->get('/admin/peminjaman');
         $adminResponse->assertStatus(200);
         $adminResponse->assertSee('Buku Khusus Budi');
         $adminResponse->assertSee('Buku Rahasia Pengguna Lain');
@@ -137,29 +140,32 @@ class LoanTest extends TestCase
             'status' => 'Dipinjam',
         ]);
 
-        // Pengunjung mencoba store
-        $this->actingAs($this->user)->post('/peminjaman', [
+        // Pengunjung mengakses area admin ditolak
+        $this->actingAs($this->user)->get('/admin/peminjaman')->assertStatus(403);
+
+        // Pengunjung mencoba store di admin
+        $this->actingAs($this->user)->post('/admin/peminjaman', [
             'user_id' => $this->user->id,
             'book_id' => $this->book->id,
             'loan_date' => Carbon::today()->toDateString(),
             'due_date' => Carbon::today()->addDays(7)->toDateString(),
         ])->assertStatus(403);
 
-        // Pengunjung mencoba update
-        $this->actingAs($this->user)->put('/peminjaman/' . $loan->id, [
+        // Pengunjung mencoba update di admin
+        $this->actingAs($this->user)->put('/admin/peminjaman/' . $loan->id, [
             'due_date' => Carbon::today()->addDays(14)->toDateString(),
             'status' => 'Dipinjam',
         ])->assertStatus(403);
 
-        // Pengunjung mencoba delete
-        $this->actingAs($this->user)->delete('/peminjaman/' . $loan->id)->assertStatus(403);
+        // Pengunjung mencoba delete di admin
+        $this->actingAs($this->user)->delete('/admin/peminjaman/' . $loan->id)->assertStatus(403);
     }
 
     public function test_admin_loan_creation_decrements_book_available_stock(): void
     {
         $initialAvailable = $this->book->available;
 
-        $response = $this->actingAs($this->admin)->post('/peminjaman', [
+        $response = $this->actingAs($this->admin)->post('/admin/peminjaman', [
             'user_id' => $this->user->id,
             'book_id' => $this->book->id,
             'loan_date' => Carbon::today()->toDateString(),
@@ -167,7 +173,7 @@ class LoanTest extends TestCase
             'notes' => 'Peminjaman pertama',
         ]);
 
-        $response->assertRedirect('/peminjaman');
+        $response->assertRedirect('/admin/peminjaman');
         $response->assertSessionHas('success');
 
         $this->book->refresh();
@@ -182,7 +188,7 @@ class LoanTest extends TestCase
     {
         $this->book->update(['available' => 0]);
 
-        $response = $this->actingAs($this->admin)->post('/peminjaman', [
+        $response = $this->actingAs($this->admin)->post('/admin/peminjaman', [
             'user_id' => $this->user->id,
             'book_id' => $this->book->id,
             'loan_date' => Carbon::today()->toDateString(),
@@ -205,14 +211,14 @@ class LoanTest extends TestCase
 
         $initialAvailable = $this->book->available;
 
-        $response = $this->actingAs($this->admin)->put('/peminjaman/' . $loan->id, [
+        $response = $this->actingAs($this->admin)->put('/admin/peminjaman/' . $loan->id, [
             'due_date' => $loan->due_date->format('Y-m-d'),
             'status' => 'Dikembalikan',
             'return_date' => Carbon::today()->toDateString(),
             'notes' => 'Buku kembali mulus',
         ]);
 
-        $response->assertRedirect('/peminjaman');
+        $response->assertRedirect('/admin/peminjaman');
         $response->assertSessionHas('success');
 
         $this->book->refresh();
@@ -235,8 +241,8 @@ class LoanTest extends TestCase
 
         $initialAvailable = $this->book->available;
 
-        $response = $this->actingAs($this->admin)->delete('/peminjaman/' . $loan->id);
-        $response->assertRedirect('/peminjaman');
+        $response = $this->actingAs($this->admin)->delete('/admin/peminjaman/' . $loan->id);
+        $response->assertRedirect('/admin/peminjaman');
         $response->assertSessionHas('success');
 
         $this->assertDatabaseMissing('loans', ['id' => $loan->id]);
@@ -257,7 +263,7 @@ class LoanTest extends TestCase
             'return_date' => null,
         ]);
 
-        $this->actingAs($this->user)->get('/peminjaman');
+        $this->actingAs($this->user)->get('/user/peminjaman');
 
         $loan->refresh();
         $this->assertEquals('Terlambat', $loan->status);

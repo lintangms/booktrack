@@ -73,7 +73,7 @@ class BookController extends Controller
 
         Book::create($validated);
 
-        return redirect()->route('books.index')
+        return redirect()->route('admin.books.index')
             ->with('success', 'Buku "' . $validated['title'] . '" berhasil ditambahkan ke koleksi!');
     }
 
@@ -94,7 +94,7 @@ class BookController extends Controller
 
         $book->update($validated);
 
-        return redirect()->route('books.index')
+        return redirect()->route('admin.books.index')
             ->with('success', 'Informasi buku berhasil diperbarui.');
     }
 
@@ -107,7 +107,7 @@ class BookController extends Controller
         $title = $book->title;
         $book->delete();
 
-        return redirect()->route('books.index')
+        return redirect()->route('admin.books.index')
             ->with('success', 'Buku "' . $title . '" berhasil dihapus.');
     }
 }
