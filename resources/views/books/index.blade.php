@@ -1,11 +1,49 @@
 @extends('layouts.app')
 
-@section('title', 'Data Buku')
-@section('page_title', 'Data Buku')
+@section('title', Auth::check() && Auth::user()->isAdmin() ? 'Data Buku' : 'Katalog Buku')
+@section('page_title', Auth::check() && Auth::user()->isAdmin() ? 'Data Buku' : 'Katalog Buku')
 
 @section('styles')
   <link rel="stylesheet" href="{{ asset('assets/css/data-buku.css') }}">
   <style>
+    /* Action Buttons */
+    .action-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-table-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.775rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-table-action:hover {
+      background: #f8fafc;
+      color: #0f172a;
+      border-color: #94a3b8;
+    }
+    .btn-table-action.btn-delete:hover {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fca5a5;
+    }
+    .btn-table-action:disabled,
+    .btn-table-action.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     .modal-overlay {
       display: none;
       position: fixed;
@@ -121,8 +159,8 @@
 @section('content')
 <div class="page-header-row">
   <div>
-    <h1 class="page-title">Data Buku</h1>
-    <p class="page-subtitle">Kelola koleksi buku yang tersedia di perpustakaan.</p>
+    <h1 class="page-title">{{ Auth::check() && Auth::user()->isAdmin() ? 'Data Buku' : 'Katalog Buku' }}</h1>
+    <p class="page-subtitle">{{ Auth::check() && Auth::user()->isAdmin() ? 'Kelola koleksi buku yang tersedia di perpustakaan.' : 'Jelajahi dan temukan koleksi buku yang tersedia di perpustakaan.' }}</p>
   </div>
   @if(Auth::check() && Auth::user()->isAdmin())
   <div>
@@ -187,11 +225,14 @@
   <table class="data-table" id="booksTable">
     <thead>
       <tr>
-        <th style="width: 38%;">BUKU</th>
-        <th style="width: 24%;">ISBN</th>
-        <th style="width: 18%;">KATEGORI</th>
-        <th style="width: 10%;">STOK</th>
-        <th style="width: 10%;">TERSEDIA</th>
+        <th style="width: {{ Auth::check() && Auth::user()->isAdmin() ? '32%' : '38%' }};">BUKU</th>
+        <th style="width: {{ Auth::check() && Auth::user()->isAdmin() ? '20%' : '24%' }};">ISBN</th>
+        <th style="width: {{ Auth::check() && Auth::user()->isAdmin() ? '18%' : '18%' }};">KATEGORI</th>
+        <th style="width: {{ Auth::check() && Auth::user()->isAdmin() ? '8%' : '10%' }};">STOK</th>
+        <th style="width: {{ Auth::check() && Auth::user()->isAdmin() ? '8%' : '10%' }};">TERSEDIA</th>
+        @if(Auth::check() && Auth::user()->isAdmin())
+          <th style="width: 14%; text-align: center;">AKSI</th>
+        @endif
       </tr>
     </thead>
     <tbody>
@@ -225,10 +266,45 @@
           <td>
             <span class="stock-num">{{ $book->available }}</span>
           </td>
+          @if(Auth::check() && Auth::user()->isAdmin())
+          <td>
+            <div class="action-btn-group" style="justify-content: center;">
+              <button 
+                type="button" 
+                class="btn-table-action btn-edit-book"
+                data-id="{{ $book->id }}"
+                data-title="{{ $book->title }}"
+                data-author="{{ $book->author }}"
+                data-isbn="{{ $book->isbn }}"
+                data-category="{{ $book->category }}"
+                data-stock="{{ $book->stock }}"
+                data-available="{{ $book->available }}"
+                title="Edit Buku">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                <span>Edit</span>
+              </button>
+
+              <form action="{{ route('admin.books.destroy', $book) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku \'{{ $book->title }}\'?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn-table-action btn-delete" title="Hapus Buku">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                  <span>Hapus</span>
+                </button>
+              </form>
+            </div>
+          </td>
+          @endif
         </tr>
       @empty
         <tr>
-          <td colspan="5" style="text-align: center; padding: 32px; color: #64748b;">
+          <td colspan="{{ Auth::check() && Auth::user()->isAdmin() ? 6 : 5 }}" style="text-align: center; padding: 32px; color: #64748b;">
             Belum ada koleksi buku yang terdaftar.
           </td>
         </tr>
@@ -293,12 +369,59 @@
     </form>
   </div>
 </div>
+
+<!-- Modal Edit Buku -->
+<div class="modal-overlay" id="editBookModal">
+  <div class="modal-box">
+    <div class="modal-header-custom">
+      <h3>Edit Data Buku</h3>
+      <button type="button" class="btn-close-custom" id="closeEditBookModal">&times;</button>
+    </div>
+    <form id="editBookForm" action="" method="POST">
+      @csrf
+      @method('PUT')
+      <div class="modal-body-custom">
+        <div class="form-field-custom">
+          <label for="editBookTitle">Judul Buku *</label>
+          <input type="text" id="editBookTitle" name="title" required>
+        </div>
+        <div class="form-field-custom">
+          <label for="editBookAuthor">Penulis *</label>
+          <input type="text" id="editBookAuthor" name="author" required>
+        </div>
+        <div class="form-field-custom">
+          <label for="editBookIsbn">Nomor ISBN *</label>
+          <input type="text" id="editBookIsbn" name="isbn" required>
+        </div>
+        <div class="form-field-custom">
+          <label for="editBookCategory">Kategori *</label>
+          <input type="text" id="editBookCategory" name="category" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-field-custom">
+            <label for="editBookStock">Total Stok *</label>
+            <input type="number" id="editBookStock" name="stock" min="1" required>
+          </div>
+          <div class="form-field-custom">
+            <label for="editBookAvailable">Stok Tersedia *</label>
+            <input type="number" id="editBookAvailable" name="available" min="0" required>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel-custom" id="cancelEditBookModal">Batal</button>
+        <button type="submit" class="btn-submit-custom">Simpan Perubahan</button>
+      </div>
+    </form>
+  </div>
+</div>
 @endif
 @endsection
 
 @section('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // Modal Tambah
     const modal = document.getElementById('addBookModal');
     const openBtn = document.getElementById('openAddBookModal');
     const closeBtn = document.getElementById('closeAddBookModal');
@@ -316,6 +439,50 @@
     if (modal) {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.classList.remove('active');
+      });
+    }
+
+    // Modal Edit
+    const editModal = document.getElementById('editBookModal');
+    const closeEditBtn = document.getElementById('closeEditBookModal');
+    const cancelEditBtn = document.getElementById('cancelEditBookModal');
+    const editForm = document.getElementById('editBookForm');
+
+    document.querySelectorAll('.btn-edit-book').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const title = btn.getAttribute('data-title');
+        const author = btn.getAttribute('data-author');
+        const isbn = btn.getAttribute('data-isbn');
+        const category = btn.getAttribute('data-category');
+        const stock = btn.getAttribute('data-stock');
+        const available = btn.getAttribute('data-available');
+
+        if (editForm) {
+          editForm.action = `{{ url('/admin/data-buku') }}/${id}`;
+        }
+        document.getElementById('editBookTitle').value = title || '';
+        document.getElementById('editBookAuthor').value = author || '';
+        document.getElementById('editBookIsbn').value = isbn || '';
+        document.getElementById('editBookCategory').value = category || '';
+        document.getElementById('editBookStock').value = stock || '';
+        document.getElementById('editBookAvailable').value = available || '';
+
+        if (editModal) {
+          editModal.classList.add('active');
+        }
+      });
+    });
+
+    if (closeEditBtn && editModal) {
+      closeEditBtn.addEventListener('click', () => editModal.classList.remove('active'));
+    }
+    if (cancelEditBtn && editModal) {
+      cancelEditBtn.addEventListener('click', () => editModal.classList.remove('active'));
+    }
+    if (editModal) {
+      editModal.addEventListener('click', (e) => {
+        if (e.target === editModal) editModal.classList.remove('active');
       });
     }
   });

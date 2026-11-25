@@ -114,37 +114,42 @@
       cursor: pointer;
     }
     .btn-submit-custom:hover { background: #047857; }
+    /* Action Buttons */
     .action-btn-group {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
-    .btn-icon-action {
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      color: #475569;
-      border-radius: 6px;
-      padding: 6px 10px;
-      font-size: 12px;
-      cursor: pointer;
+    .btn-table-action {
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.775rem;
       font-weight: 600;
-      transition: all 0.2s;
+      cursor: pointer;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      transition: all 0.15s ease;
+      text-decoration: none;
     }
-    .btn-icon-action:hover {
-      background: #e2e8f0;
+    .btn-table-action:hover {
+      background: #f8fafc;
       color: #0f172a;
+      border-color: #94a3b8;
     }
-    .btn-icon-danger {
-      color: #dc2626;
+    .btn-table-action.btn-delete:hover {
       background: #fef2f2;
-      border-color: #fee2e2;
+      color: #b91c1c;
+      border-color: #fca5a5;
     }
-    .btn-icon-danger:hover {
-      background: #fee2e2;
-      color: #991b1b;
+    .btn-table-action:disabled,
+    .btn-table-action.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
     }
     .badge-denda-lunas {
       display: inline-block;
@@ -179,8 +184,8 @@
 @section('content')
 <div class="page-header-row">
   <div>
-    <h1 class="page-title">Pengembalian & Denda</h1>
-    <p class="page-subtitle">Modul CRUD 4: Proses pengembalian buku, kalkulasi denda keterlambatan, dan pemeriksaan fisik koleksi.</p>
+    <h1 class="page-title">{{ Auth::check() && Auth::user()->isAdmin() ? 'Pengembalian & Denda' : 'Pengembalian Saya' }}</h1>
+    <p class="page-subtitle">{{ Auth::check() && Auth::user()->isAdmin() ? 'Kelola pengembalian buku, kalkulasi denda keterlambatan, dan pemeriksaan fisik koleksi.' : 'Riwayat pengembalian buku Anda beserta status denda dan kondisi buku.' }}</p>
   </div>
   @if(Auth::check() && Auth::user()->isAdmin())
   <div>
@@ -189,7 +194,7 @@
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
         <path d="M3 3v5h5"></path>
       </svg>
-      <span>Kembalikan Buku</span>
+      <span>Tambah Pengembalian</span>
     </button>
   </div>
   @endif
@@ -313,7 +318,7 @@
               <!-- Tombol Edit (Update) -->
               <button 
                 type="button" 
-                class="btn-icon-action btn-edit-return"
+                class="btn-table-action btn-edit-return"
                 data-id="{{ $ret->id }}"
                 data-code="{{ $ret->return_code }}"
                 data-fine="{{ $ret->fine_amount }}"
@@ -321,7 +326,7 @@
                 data-notes="{{ $ret->notes }}"
                 title="Edit Pengembalian"
               >
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
@@ -332,11 +337,12 @@
               <form action="{{ route('admin.returns.destroy', $ret->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pengembalian \'{{ $ret->return_code }}\'?');">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn-icon-action btn-icon-danger" title="Hapus Pengembalian">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <button type="submit" class="btn-table-action btn-delete" title="Hapus Pengembalian">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="3 6 5 6 21 6"></polyline>
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                   </svg>
+                  <span>Hapus</span>
                 </button>
               </form>
             </div>
@@ -359,7 +365,7 @@
 <div class="modal-overlay" id="addReturnModal">
   <div class="modal-box">
     <div class="modal-header-custom">
-      <h3>Proses Pengembalian Buku</h3>
+      <h3>Tambah Pengembalian Buku</h3>
       <button type="button" class="btn-close-custom" id="closeAddReturnModal">&times;</button>
     </div>
     <form action="{{ route('admin.returns.store') }}" method="POST">

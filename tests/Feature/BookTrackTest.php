@@ -76,6 +76,28 @@ class BookTrackTest extends TestCase
 
         $createResponse->assertRedirect('/admin/data-buku');
         $this->assertDatabaseHas('books', ['isbn' => $newBookIsbn]);
+
+        // Test update buku
+        $createdBook = Book::where('isbn', $newBookIsbn)->first();
+        $updateResponse = $this->actingAs($user)->put('/admin/data-buku/' . $createdBook->id, [
+            'title' => 'Negeri 5 Menara (Edisi Khusus)',
+            'author' => 'Ahmad Fuadi',
+            'isbn' => $newBookIsbn,
+            'category' => 'Novel Inspiratif',
+            'stock' => 20,
+            'available' => 20,
+        ]);
+        $updateResponse->assertRedirect('/admin/data-buku');
+        $this->assertDatabaseHas('books', [
+            'id' => $createdBook->id,
+            'title' => 'Negeri 5 Menara (Edisi Khusus)',
+            'stock' => 20,
+        ]);
+
+        // Test delete buku
+        $deleteResponse = $this->actingAs($user)->delete('/admin/data-buku/' . $createdBook->id);
+        $deleteResponse->assertRedirect('/admin/data-buku');
+        $this->assertDatabaseMissing('books', ['id' => $createdBook->id]);
     }
 
     public function test_profile_page_can_be_viewed_and_updated(): void

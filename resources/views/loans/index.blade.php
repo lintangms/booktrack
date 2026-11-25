@@ -248,7 +248,7 @@
         <line x1="12" y1="5" x2="12" y2="19"></line>
         <line x1="5" y1="12" x2="19" y2="12"></line>
       </svg>
-      <span>Catat Peminjaman</span>
+      <span>Tambah Peminjaman</span>
     </button>
   </div>
   @endif
@@ -442,7 +442,7 @@
 <div class="modal-overlay" id="addLoanModal">
   <div class="modal-box">
     <div class="modal-header-custom">
-      <h3>Catat Peminjaman Buku</h3>
+      <h3>Tambah Peminjaman Buku</h3>
       <button type="button" class="btn-close-custom" id="closeAddLoanModal">&times;</button>
     </div>
     <form action="{{ route('admin.loans.store') }}" method="POST">
